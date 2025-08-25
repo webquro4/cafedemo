@@ -20,6 +20,7 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminMenu from "./pages/admin/AdminMenu";
+import AdminStaff from "./pages/admin/AdminStaff";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminUsers from "./pages/admin/AdminUsers";
 
@@ -54,6 +55,7 @@ const App = () => (
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="reservations" element={<AdminReservations />} />
                 <Route path="menu" element={<AdminMenu />} />
+                <Route path="staff" element={<AdminStaff />} />
                 <Route path="pages" element={<AdminPages />} />
                 <Route path="users" element={<AdminUsers />} />
               </Route>

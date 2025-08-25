@@ -39,6 +39,11 @@ const AdminSidebar = () => {
       icon: MenuIcon,
     },
     {
+      name: "Staff",
+      href: "/admin/staff",
+      icon: Users,
+    },
+    {
       name: "Pages",
       href: "/admin/pages",
       icon: FileText,
@@ -46,7 +51,7 @@ const AdminSidebar = () => {
     {
       name: "Users",
       href: "/admin/users",
-      icon: Users,
+      icon: Settings,
     },
   ];
 

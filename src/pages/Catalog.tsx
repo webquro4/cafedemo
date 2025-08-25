@@ -3,26 +3,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const Gallery = () => {
+const Catalog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   const categories = [
     { id: "all", name: "All" },
-    { id: "food", name: "Food" },
-    { id: "ambiance", name: "Ambiance" },
+    { id: "dishes", name: "Signature Dishes" },
+    { id: "ambiance", name: "Restaurant" },
     { id: "events", name: "Events" },
   ];
 
-  // Mock gallery images
+  // Mock catalog images
   const images = [
-    { id: 1, category: "food", title: "Wagyu Beef Tartare", description: "Hand-cut wagyu with quail egg and caviar" },
+    { id: 1, category: "dishes", title: "Wagyu Beef Tartare", description: "Hand-cut wagyu with quail egg and caviar" },
     { id: 2, category: "ambiance", title: "Dining Room", description: "Elegant interior with warm lighting" },
-    { id: 3, category: "food", title: "Truffle Arancini", description: "Crispy risotto balls with black truffle" },
+    { id: 3, category: "dishes", title: "Truffle Arancini", description: "Crispy risotto balls with black truffle" },
     { id: 4, category: "events", title: "Private Dining", description: "Exclusive dining experience" },
-    { id: 5, category: "food", title: "Pan-Seared Halibut", description: "Atlantic halibut with cauliflower purée" },
+    { id: 5, category: "dishes", title: "Pan-Seared Halibut", description: "Atlantic halibut with cauliflower purée" },
     { id: 6, category: "ambiance", title: "Wine Cellar", description: "Curated selection of fine wines" },
-    { id: 7, category: "food", title: "Chocolate Soufflé", description: "Warm chocolate soufflé with gold leaf" },
+    { id: 7, category: "dishes", title: "Chocolate Soufflé", description: "Warm chocolate soufflé with gold leaf" },
     { id: 8, category: "events", title: "Chef's Table", description: "Interactive culinary experience" },
     { id: 9, category: "ambiance", title: "Bar Area", description: "Sophisticated cocktail lounge" },
   ];
@@ -60,10 +60,10 @@ const Gallery = () => {
             className="space-y-6"
           >
             <h1 className="text-5xl md:text-6xl font-playfair font-bold">
-              Our <span className="text-gold">Gallery</span>
+              Our <span className="text-gold">Catalog</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover the beauty of our culinary artistry, elegant ambiance, 
+              Explore our curated collection of signature dishes, elegant spaces, 
               and memorable dining experiences.
             </p>
           </motion.div>
@@ -97,7 +97,7 @@ const Gallery = () => {
         </div>
       </section>
 
-      {/* Gallery Grid */}
+      {/* Catalog Grid */}
       <section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <AnimatePresence mode="wait">
@@ -210,4 +210,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default Catalog;

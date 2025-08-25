@@ -16,7 +16,8 @@ const Navbar = () => {
     { name: "Home", href: "/" },
     { name: "Menu", href: "/menu" },
     { name: "About", href: "/about" },
-    { name: "Gallery", href: "/gallery" },
+    { name: "Chefs", href: "/chefs" },
+    { name: "Catalog", href: "/catalog" },
     { name: "Contact", href: "/contact" },
   ];
 

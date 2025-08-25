@@ -10,7 +10,8 @@ import { store } from "./store";
 import Index from "./pages/Index";
 import Menu from "./pages/Menu";
 import About from "./pages/About";
-import Gallery from "./pages/Gallery";
+import Chefs from "./pages/Chefs";
+import Catalog from "./pages/Catalog";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
@@ -42,7 +43,8 @@ const App = () => (
                 <Route index element={<Index />} />
                 <Route path="menu" element={<Menu />} />
                 <Route path="about" element={<About />} />
-                <Route path="gallery" element={<Gallery />} />
+                <Route path="chefs" element={<Chefs />} />
+                <Route path="catalog" element={<Catalog />} />
                 <Route path="contact" element={<Contact />} />
               </Route>
               

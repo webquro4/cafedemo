@@ -23,6 +23,7 @@ import AdminMenu from "./pages/admin/AdminMenu";
 import AdminStaff from "./pages/admin/AdminStaff";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 // Components
 import Layout from "./components/Layout";
@@ -58,6 +59,7 @@ const App = () => (
                 <Route path="staff" element={<AdminStaff />} />
                 <Route path="pages" element={<AdminPages />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="settings" element={<AdminSettings />} />
               </Route>
               
               {/* 404 Route */}

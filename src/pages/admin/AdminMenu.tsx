@@ -1,66 +1,49 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { Search, Plus, Edit, Trash2, Image, DollarSign } from "lucide-react";
+import { RootState } from "@/store";
+import { removeMenuItem, MenuItem } from "@/store/slices/menuSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import MenuItemModal from "@/components/admin/MenuItemModal";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminMenu = () => {
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+  const menuItems = useSelector((state: RootState) => state.menu.items);
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
 
-  const menuItems = [
-    {
-      id: "1",
-      name: "Truffle Arancini",
-      description: "Crispy risotto balls with black truffle, parmesan, and wild mushroom ragù",
-      price: 18,
-      category: "starters",
-      image: null,
-      isVegetarian: true,
-      isGlutenFree: false,
-      isSpicy: false,
-      available: true
-    },
-    {
-      id: "2",
-      name: "Wagyu Beef Tartare",
-      description: "Hand-cut wagyu beef with quail egg, caviar, and crispy shallots",
-      price: 32,
-      category: "starters",
-      image: null,
-      isVegetarian: false,
-      isGlutenFree: true,
-      isSpicy: false,
-      available: true
-    },
-    {
-      id: "3",
-      name: "Pan-Seared Halibut",
-      description: "Atlantic halibut with cauliflower purée, brown butter, and microgreens",
-      price: 45,
-      category: "mains",
-      image: null,
-      isVegetarian: false,
-      isGlutenFree: true,
-      isSpicy: false,
-      available: false
-    },
-    {
-      id: "4",
-      name: "Dry-Aged Ribeye",
-      description: "28-day aged ribeye with roasted bone marrow and truffle jus",
-      price: 65,
-      category: "mains",
-      image: null,
-      isVegetarian: false,
-      isGlutenFree: true,
-      isSpicy: false,
-      available: true
-    }
-  ];
+  const handleAddItem = () => {
+    setEditingItem(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditItem = (item: MenuItem) => {
+    setEditingItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteItem = (itemId: string) => {
+    dispatch(removeMenuItem(itemId));
+    toast({
+      title: "Success",
+      description: "Menu item deleted successfully",
+    });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingItem(null);
+  };
 
   const categories = [
     { value: "all", label: "All Categories" },
@@ -100,7 +83,10 @@ const AdminMenu = () => {
           <h1 className="text-3xl font-playfair font-bold text-gold">Menu Management</h1>
           <p className="text-muted-foreground">Create and manage your restaurant menu items</p>
         </div>
-        <Button className="bg-gold text-primary-foreground hover:bg-gold-dark">
+        <Button 
+          className="bg-gold text-primary-foreground hover:bg-gold-dark"
+          onClick={handleAddItem}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Menu Item
         </Button>
@@ -167,11 +153,6 @@ const AdminMenu = () => {
                       <h3 className="font-playfair font-semibold text-lg leading-tight">{item.name}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         {getCategoryBadge(item.category)}
-                        {!item.available && (
-                          <Badge variant="secondary" className="bg-red-500/10 text-red-500">
-                            Unavailable
-                          </Badge>
-                        )}
                       </div>
                     </div>
                     <div className="flex items-center text-xl font-bold text-gold ml-2">
@@ -205,11 +186,21 @@ const AdminMenu = () => {
 
                   {/* Actions */}
                   <div className="flex space-x-2 pt-2">
-                    <Button variant="outline" size="sm" className="flex-1 border-gold text-gold hover:bg-gold hover:text-primary-foreground">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1 border-gold text-gold hover:bg-gold hover:text-primary-foreground"
+                      onClick={() => handleEditItem(item)}
+                    >
                       <Edit className="w-3 h-3 mr-1" />
                       Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
+                      onClick={() => handleDeleteItem(item.id)}
+                    >
                       <Trash2 className="w-3 h-3" />
                     </Button>
                   </div>
@@ -236,6 +227,13 @@ const AdminMenu = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Menu Item Modal */}
+      <MenuItemModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        item={editingItem}
+      />
     </div>
   );
 };

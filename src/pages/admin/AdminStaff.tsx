@@ -33,14 +33,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import StaffMemberModal, { StaffMember } from "@/components/admin/StaffMemberModal";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminStaff = () => {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<StaffMember | null>(null);
 
-  const staff = [
+  const [staff, setStaff] = useState<StaffMember[]>([
     {
       id: "1",
       name: "Marcus Dubois",
@@ -177,7 +182,40 @@ const AdminStaff = () => {
       rating: 4.5,
       experience: "4+ years"
     }
-  ];
+  ]);
+
+  const handleAddStaff = () => {
+    setEditingMember(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditStaff = (member: StaffMember) => {
+    setEditingMember(member);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveStaff = (staffMember: StaffMember) => {
+    if (editingMember) {
+      // Update existing staff member
+      setStaff(staff.map(s => s.id === staffMember.id ? staffMember : s));
+    } else {
+      // Add new staff member
+      setStaff([...staff, staffMember]);
+    }
+  };
+
+  const handleDeleteStaff = (staffId: string) => {
+    setStaff(staff.filter(s => s.id !== staffId));
+    toast({
+      title: "Success",
+      description: "Staff member removed successfully",
+    });
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingMember(null);
+  };
 
   const departments = [
     { value: "all", label: "All Departments" },
@@ -269,7 +307,10 @@ const AdminStaff = () => {
           <h1 className="text-3xl font-playfair font-bold text-gold">Staff Management</h1>
           <p className="text-muted-foreground">Manage restaurant staff and employee information</p>
         </div>
-        <Button className="bg-gold text-primary-foreground hover:bg-gold-dark">
+        <Button 
+          className="bg-gold text-primary-foreground hover:bg-gold-dark"
+          onClick={handleAddStaff}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add Staff Member
         </Button>
@@ -398,7 +439,12 @@ const AdminStaff = () => {
                       </div>
                       
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" className="flex-1 border-gold text-gold hover:bg-gold hover:text-primary-foreground">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="flex-1 border-gold text-gold hover:bg-gold hover:text-primary-foreground"
+                          onClick={() => handleEditStaff(member)}
+                        >
                           <Edit className="w-3 h-3 mr-1" />
                           Edit
                         </Button>
@@ -412,7 +458,10 @@ const AdminStaff = () => {
                             <DropdownMenuItem>View Details</DropdownMenuItem>
                             <DropdownMenuItem>Schedule</DropdownMenuItem>
                             <DropdownMenuItem>Payroll</DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-500">
+                            <DropdownMenuItem 
+                              className="text-red-500"
+                              onClick={() => handleDeleteStaff(member.id)}
+                            >
                               <Trash2 className="w-3 h-3 mr-1" />
                               Remove
                             </DropdownMenuItem>
@@ -489,7 +538,12 @@ const AdminStaff = () => {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm" className="border-gold text-gold hover:bg-gold hover:text-primary-foreground">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="border-gold text-gold hover:bg-gold hover:text-primary-foreground"
+                        onClick={() => handleEditStaff(member)}
+                      >
                         <Edit className="w-3 h-3 mr-1" />
                         Edit
                       </Button>
@@ -504,7 +558,10 @@ const AdminStaff = () => {
                           <DropdownMenuItem>View Schedule</DropdownMenuItem>
                           <DropdownMenuItem>Payroll Info</DropdownMenuItem>
                           <DropdownMenuItem>Performance Review</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-500">
+                          <DropdownMenuItem 
+                            className="text-red-500"
+                            onClick={() => handleDeleteStaff(member.id)}
+                          >
                             <Trash2 className="w-3 h-3 mr-1" />
                             Remove Staff
                           </DropdownMenuItem>
@@ -584,6 +641,14 @@ const AdminStaff = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Staff Member Modal */}
+      <StaffMemberModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSaveStaff}
+        member={editingMember}
+      />
     </div>
   );
 };

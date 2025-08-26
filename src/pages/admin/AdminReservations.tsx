@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
 import { Search, Filter, MoreHorizontal, CheckCircle, XCircle, Clock, Calendar, Users, Phone, Mail } from "lucide-react";
+import { openReservationModal } from "@/store/slices/reservationSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +18,7 @@ import {
 const AdminReservations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const dispatch = useDispatch();
 
   const reservations = [
     {
@@ -106,7 +109,10 @@ const AdminReservations = () => {
           <h1 className="text-3xl font-playfair font-bold text-gold">Reservations</h1>
           <p className="text-muted-foreground">Manage all restaurant reservations</p>
         </div>
-        <Button className="bg-gold text-primary-foreground hover:bg-gold-dark">
+        <Button 
+          className="bg-gold text-primary-foreground hover:bg-gold-dark"
+          onClick={() => dispatch(openReservationModal())}
+        >
           <Calendar className="w-4 h-4 mr-2" />
           Add Reservation
         </Button>

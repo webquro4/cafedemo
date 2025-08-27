@@ -12,11 +12,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import UserModal from "@/components/admin/UserModal";
+import { useToast } from "@/hooks/use-toast";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "editor" | "viewer";
+  avatar?: string | null;
+  lastLogin: string;
+  status: "active" | "inactive" | "suspended";
+  joinedDate: string;
+}
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
-
-  const users = [
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([
     {
       id: "1",
       name: "Marcus Dubois",
@@ -57,7 +71,53 @@ const AdminUsers = () => {
       status: "inactive",
       joinedDate: "2023-09-05"
     }
-  ];
+  ]);
+  const { toast } = useToast();
+
+  const handleAddUser = () => {
+    setEditingUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    setUsers(users.filter(user => user.id !== userId));
+    toast({
+      title: "User Deleted",
+      description: "User has been successfully deleted.",
+    });
+  };
+
+  const handleSaveUser = (userData: Omit<User, "id" | "lastLogin" | "joinedDate"> & { id?: string }) => {
+    if (userData.id) {
+      // Update existing user
+      setUsers(users.map(user => 
+        user.id === userData.id 
+          ? { 
+              ...user, 
+              ...userData,
+              avatar: userData.avatar || null
+            } as User
+          : user
+      ));
+    } else {
+      // Add new user
+      const newUser: User = {
+        ...userData,
+        id: Date.now().toString(),
+        avatar: userData.avatar || null,
+        lastLogin: new Date().toISOString(),
+        joinedDate: new Date().toISOString().split('T')[0],
+      };
+      setUsers([...users, newUser]);
+    }
+    setIsModalOpen(false);
+    setEditingUser(null);
+  };
 
   const getRoleBadge = (role: string) => {
     const variants = {
@@ -108,7 +168,10 @@ const AdminUsers = () => {
           <h1 className="text-3xl font-playfair font-bold text-gold">User Management</h1>
           <p className="text-muted-foreground">Manage admin users and their permissions</p>
         </div>
-        <Button className="bg-gold text-primary-foreground hover:bg-gold-dark">
+        <Button 
+          onClick={handleAddUser}
+          className="bg-gold text-primary-foreground hover:bg-gold-dark"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Add User
         </Button>
@@ -192,14 +255,17 @@ const AdminUsers = () => {
                         <Shield className="w-4 h-4 mr-2" />
                         Change Role
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEditUser(user)}>
                         Edit User
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         Reset Password
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500">
-                        Suspend User
+                      <DropdownMenuItem 
+                        className="text-red-500"
+                        onClick={() => handleDeleteUser(user.id)}
+                      >
+                        Delete User
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -264,6 +330,13 @@ const AdminUsers = () => {
           </div>
         </CardContent>
       </Card>
+
+      <UserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveUser}
+        user={editingUser}
+      />
     </div>
   );
 };

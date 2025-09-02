@@ -14,13 +14,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import ReservationEditModal from "@/components/admin/ReservationEditModal";
 
 const AdminReservations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const dispatch = useDispatch();
-
-  const reservations = [
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [reservationsList, setReservationsList] = useState([
     {
       id: "1",
       name: "John Smith",
@@ -65,7 +66,21 @@ const AdminReservations = () => {
       status: "cancelled",
       createdAt: "2024-01-18"
     },
-  ];
+  ]);
+  const dispatch = useDispatch();
+
+  const handleEditReservation = (reservation) => {
+    setSelectedReservation(reservation);
+    setEditModalOpen(true);
+  };
+
+  const handleSaveReservation = (updatedReservation) => {
+    setReservationsList(prev => 
+      prev.map(res => 
+        res.id === updatedReservation.id ? updatedReservation : res
+      )
+    );
+  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -94,7 +109,7 @@ const AdminReservations = () => {
     }
   };
 
-  const filteredReservations = reservations.filter(reservation => {
+  const filteredReservations = reservationsList.filter(reservation => {
     const matchesSearch = reservation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          reservation.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || reservation.status === statusFilter;
@@ -213,7 +228,7 @@ const AdminReservations = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Edit Reservation</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleEditReservation(reservation)}>Edit Reservation</DropdownMenuItem>
                         <DropdownMenuItem>Confirm</DropdownMenuItem>
                         <DropdownMenuItem className="text-red-500">Cancel</DropdownMenuItem>
                       </DropdownMenuContent>
@@ -240,6 +255,13 @@ const AdminReservations = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ReservationEditModal
+        reservation={selectedReservation}
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleSaveReservation}
+      />
     </div>
   );
 };

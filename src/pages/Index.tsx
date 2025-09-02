@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { Calendar, Star, Users, Award, Quote, ChefHat, Sparkles, Crown, Heart } from "lucide-react";
+import { Calendar, Star, Users, Award, Quote, ChefHat, Sparkles, Crown, Heart, Utensils } from "lucide-react";
+import { RootState } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,10 +11,14 @@ import heroImage from "@/assets/hero-restaurant.jpg";
 
 const Index = () => {
   const dispatch = useDispatch();
+  const menuItems = useSelector((state: RootState) => state.menu.items);
 
   const handleReservation = () => {
     dispatch(openReservationModal());
   };
+
+  // Get a few featured menu items for preview
+  const featuredMenuItems = menuItems.slice(0, 4);
 
   const features = [
     {
@@ -186,6 +191,88 @@ const Index = () => {
             <div className="w-1 h-3 bg-gold rounded-full mt-2" />
           </div>
         </motion.div>
+      </section>
+
+      {/* Menu Preview Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-playfair font-bold mb-6">
+              Our <span className="text-gold">Signature</span> Menu
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Discover our carefully crafted dishes that blend innovation with tradition, 
+              using only the finest ingredients from around the world.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {featuredMenuItems.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card className="luxury-card h-full overflow-hidden">
+                  <div className="aspect-square bg-muted flex items-center justify-center">
+                    <Utensils className="w-12 h-12 text-gold/50" />
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-playfair font-semibold text-lg leading-tight">{item.name}</h3>
+                      <span className="text-gold font-bold text-lg">${item.price}</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+                      {item.description}
+                    </p>
+                    <div className="flex items-center space-x-2">
+                      {item.isVegetarian && (
+                        <span className="w-6 h-6 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-xs">
+                          V
+                        </span>
+                      )}
+                      {item.isGlutenFree && (
+                        <span className="w-6 h-6 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-xs">
+                          GF
+                        </span>
+                      )}
+                      {item.isSpicy && (
+                        <span className="w-6 h-6 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-xs">
+                          🌶️
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <Button
+              asChild
+              size="lg"
+              className="btn-gold text-lg px-8 py-4"
+            >
+              <Link to="/menu">
+                <Utensils className="w-5 h-5 mr-2" />
+                See Full Menu
+              </Link>
+            </Button>
+          </motion.div>
+        </div>
       </section>
 
       {/* Features Section */}

@@ -195,7 +195,7 @@ const Index = () => {
 
       {/* Menu Preview Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -211,49 +211,72 @@ const Index = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {featuredMenuItems.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="luxury-card h-full overflow-hidden">
-                  <div className="aspect-square bg-muted flex items-center justify-center">
-                    <Utensils className="w-12 h-12 text-gold/50" />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-playfair font-semibold text-lg leading-tight">{item.name}</h3>
-                      <span className="text-gold font-bold text-lg">${item.price}</span>
-                    </div>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-3">
-                      {item.description}
-                    </p>
-                    <div className="flex items-center space-x-2">
-                      {item.isVegetarian && (
-                        <span className="w-6 h-6 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-xs">
-                          V
-                        </span>
-                      )}
-                      {item.isGlutenFree && (
-                        <span className="w-6 h-6 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-xs">
-                          GF
-                        </span>
-                      )}
-                      {item.isSpicy && (
-                        <span className="w-6 h-6 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center text-xs">
-                          🌶️
-                        </span>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+          {/* Menu Layout */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12"
+          >
+            <Card className="luxury-card overflow-hidden">
+              <CardContent className="p-8 md:p-12">
+                <div className="text-center mb-10">
+                  <Utensils className="w-12 h-12 text-gold mx-auto mb-4" />
+                  <h3 className="text-2xl font-playfair font-bold text-gold mb-2">Chef's Selection</h3>
+                  <div className="w-24 h-0.5 bg-gold mx-auto"></div>
+                </div>
+                
+                <div className="space-y-8">
+                  {featuredMenuItems.map((item, index) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.15 }}
+                      className="group"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1 pr-4">
+                          <div className="flex items-center mb-2">
+                            <h4 className="text-xl font-playfair font-semibold group-hover:text-gold transition-colors">
+                              {item.name}
+                            </h4>
+                            <div className="flex items-center ml-3 space-x-1">
+                              {item.isVegetarian && (
+                                <span className="w-5 h-5 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-xs font-medium">
+                                  V
+                                </span>
+                              )}
+                              {item.isGlutenFree && (
+                                <span className="w-5 h-5 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center text-xs font-medium">
+                                  GF
+                                </span>
+                              )}
+                              {item.isSpicy && (
+                                <span className="text-red-500 text-sm">🌶️</span>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-muted-foreground leading-relaxed text-sm">
+                            {item.description}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end ml-4">
+                          <span className="text-2xl font-playfair font-bold text-gold">
+                            ${item.price}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Decorative dotted line */}
+                      <div className="border-b border-dotted border-muted-foreground/30 group-hover:border-gold/50 transition-colors"></div>
+                    </motion.div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

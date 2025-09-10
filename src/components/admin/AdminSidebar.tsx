@@ -40,6 +40,11 @@ const AdminSidebar = () => {
       icon: MenuIcon,
     },
     {
+      name: "Invoices",
+      href: "/admin/invoices",
+      icon: FileText,
+    },
+    {
       name: "Staff",
       href: "/admin/staff",
       icon: Users,

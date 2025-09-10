@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, MoreHorizontal, Plus, Eye, Edit, Trash2, FileText, Calendar, DollarSign } from "lucide-react";
+import InvoiceModal from "@/components/admin/InvoiceModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +26,7 @@ const AdminInvoices = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const pageSize = 10;
 
   // Mock invoice data
@@ -75,6 +77,12 @@ const AdminInvoices = () => {
     },
   ]);
 
+  const handleCreateInvoice = (invoiceData: any) => {
+    console.log("Creating invoice:", invoiceData);
+    // Here you would typically send the data to your backend
+    // For now, just log it
+  };
+
   const getStatusBadge = (status: string) => {
     const variants = {
       "Paid": "bg-green-500/10 text-green-500 border-green-500/20",
@@ -119,7 +127,7 @@ const AdminInvoices = () => {
           <h1 className="text-3xl font-playfair font-bold text-gold">Invoices</h1>
           <p className="text-muted-foreground">Manage all restaurant invoices and payments</p>
         </div>
-        <Button className="bg-gold text-primary-foreground hover:bg-gold-dark">
+        <Button className="bg-gold text-primary-foreground hover:bg-gold-dark" onClick={() => setIsInvoiceModalOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add New Invoice
         </Button>
@@ -321,6 +329,13 @@ const AdminInvoices = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Invoice Modal */}
+      <InvoiceModal
+        isOpen={isInvoiceModalOpen}
+        onClose={() => setIsInvoiceModalOpen(false)}
+        onSubmit={handleCreateInvoice}
+      />
     </div>
   );
 };

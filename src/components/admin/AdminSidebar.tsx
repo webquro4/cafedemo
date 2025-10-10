@@ -10,7 +10,8 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  User
+  User,
+  FolderTree
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
@@ -38,6 +39,11 @@ const AdminSidebar = () => {
       name: "Menu",
       href: "/admin/menu",
       icon: MenuIcon,
+    },
+    {
+      name: "Categories",
+      href: "/admin/categories",
+      icon: FolderTree,
     },
     {
       name: "Invoices",

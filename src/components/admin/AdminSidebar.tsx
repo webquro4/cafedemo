@@ -51,6 +51,11 @@ const AdminSidebar = () => {
       icon: FileText,
     },
     {
+      name: "Suppliers",
+      href: "/admin/suppliers",
+      icon: Users,
+    },
+    {
       name: "Staff",
       href: "/admin/staff",
       icon: Users,

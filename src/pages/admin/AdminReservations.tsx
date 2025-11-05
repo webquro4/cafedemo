@@ -1,13 +1,29 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
-import { Search, Filter, MoreHorizontal, CheckCircle, XCircle, Clock, Calendar, Users, Phone, Mail } from "lucide-react";
+import { Search, Filter, MoreHorizontal, CheckCircle, XCircle, Clock, Calendar, Users, Phone, Mail, Eye, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { openReservationModal } from "@/store/slices/reservationSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +35,8 @@ import ReservationEditModal from "@/components/admin/ReservationEditModal";
 const AdminReservations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [reservationsList, setReservationsList] = useState([
@@ -111,17 +129,33 @@ const AdminReservations = () => {
 
   const filteredReservations = reservationsList.filter(reservation => {
     const matchesSearch = reservation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         reservation.email.toLowerCase().includes(searchTerm.toLowerCase());
+                         reservation.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         reservation.phone.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "all" || reservation.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedReservations = filteredReservations.slice(startIndex, endIndex);
+
+  // Stats calculations
+  const totalReservations = reservationsList.length;
+  const confirmedReservations = reservationsList.filter(r => r.status === "confirmed").length;
+  const pendingReservations = reservationsList.filter(r => r.status === "pending").length;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-playfair font-bold text-gold">Reservations</h1>
+          <h1 className="text-3xl font-playfair font-bold text-gold">Reservation Management</h1>
           <p className="text-muted-foreground">Manage all restaurant reservations</p>
         </div>
         <Button 
@@ -129,8 +163,50 @@ const AdminReservations = () => {
           onClick={() => dispatch(openReservationModal())}
         >
           <Calendar className="w-4 h-4 mr-2" />
-          Add Reservation
+          Add New Reservation
         </Button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="luxury-card border-border/50 hover:border-gold/30 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Reservations
+            </CardTitle>
+            <Calendar className="h-4 w-4 text-gold" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{totalReservations}</div>
+            <p className="text-xs text-muted-foreground">All time bookings</p>
+          </CardContent>
+        </Card>
+
+        <Card className="luxury-card border-border/50 hover:border-gold/30 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Confirmed
+            </CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{confirmedReservations}</div>
+            <p className="text-xs text-muted-foreground">Active confirmations</p>
+          </CardContent>
+        </Card>
+
+        <Card className="luxury-card border-border/50 hover:border-gold/30 transition-colors">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Pending
+            </CardTitle>
+            <Clock className="h-4 w-4 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-foreground">{pendingReservations}</div>
+            <p className="text-xs text-muted-foreground">Awaiting confirmation</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
@@ -165,94 +241,154 @@ const AdminReservations = () => {
       </Card>
 
       {/* Reservations Table */}
-      <Card className="luxury-card">
+      <Card className="luxury-card border-border/50">
         <CardHeader>
           <CardTitle className="text-gold">All Reservations ({filteredReservations.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {filteredReservations.map((reservation, index) => (
-              <motion.div
-                key={reservation.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="p-4 bg-muted/30 rounded-lg border border-border hover:border-gold/30 transition-colors"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-2 bg-gold/10 rounded-full">
-                      {getStatusIcon(reservation.status)}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div>
-                        <h3 className="font-semibold text-lg">{reservation.name}</h3>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <div className="flex items-center">
+          <div className="rounded-md border border-border/50">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-muted/50">
+                  <TableHead className="font-semibold text-foreground">Customer</TableHead>
+                  <TableHead className="font-semibold text-foreground">Contact</TableHead>
+                  <TableHead className="font-semibold text-foreground">Date & Time</TableHead>
+                  <TableHead className="font-semibold text-foreground">Guests</TableHead>
+                  <TableHead className="font-semibold text-foreground">Status</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedReservations.length > 0 ? (
+                  paginatedReservations.map((reservation) => (
+                    <TableRow 
+                      key={reservation.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <TableCell>
+                        <div className="font-medium">{reservation.name}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center text-sm text-muted-foreground">
                             <Mail className="w-3 h-3 mr-1" />
                             {reservation.email}
                           </div>
-                          <div className="flex items-center">
+                          <div className="flex items-center text-sm text-muted-foreground">
                             <Phone className="w-3 h-3 mr-1" />
                             {reservation.phone}
                           </div>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center text-sm">
+                            <Calendar className="w-3 h-3 mr-1 text-muted-foreground" />
+                            {new Date(reservation.date).toLocaleDateString()}
+                          </div>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Clock className="w-3 h-3 mr-1" />
+                            {reservation.time}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Users className="w-4 h-4 mr-2 text-muted-foreground" />
+                          {reservation.guests}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {getStatusBadge(reservation.status)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-muted"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-muted"
+                            onClick={() => handleEditReservation(reservation)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-destructive/10 text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      <div className="flex flex-col items-center justify-center py-8">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                          <Calendar className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <h3 className="text-lg font-medium mb-2">No reservations found</h3>
+                        <p className="text-muted-foreground">
+                          {searchTerm || statusFilter !== "all" 
+                            ? "Try adjusting your search or filter criteria"
+                            : "No reservations have been made yet"
+                          }
+                        </p>
                       </div>
-                      
-                      <div className="flex items-center space-x-6 text-sm">
-                        <div className="flex items-center text-muted-foreground">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          {new Date(reservation.date).toLocaleDateString()}
-                        </div>
-                        <div className="flex items-center text-muted-foreground">
-                          <Clock className="w-4 h-4 mr-2" />
-                          {reservation.time}
-                        </div>
-                        <div className="flex items-center text-muted-foreground">
-                          <Users className="w-4 h-4 mr-2" />
-                          {reservation.guests} guests
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between lg:justify-end space-x-4">
-                    {getStatusBadge(reservation.status)}
-                    
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEditReservation(reservation)}>Edit Reservation</DropdownMenuItem>
-                        <DropdownMenuItem>Confirm</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500">Cancel</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-            
-            {filteredReservations.length === 0 && (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">No reservations found</h3>
-                <p className="text-muted-foreground">
-                  {searchTerm || statusFilter !== "all" 
-                    ? "Try adjusting your search or filter criteria"
-                    : "No reservations have been made yet"
-                  }
-                </p>
-              </div>
-            )}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
+
+          {/* Pagination */}
+          {filteredReservations.length > itemsPerPage && (
+            <div className="mt-6 flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Showing {startIndex + 1} to {Math.min(endIndex, filteredReservations.length)} of {filteredReservations.length} reservations
+              </div>
+              
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -22,6 +22,8 @@ import AdminReservations from "./pages/admin/AdminReservations";
 import AdminMenu from "./pages/admin/AdminMenu";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminInvoices from "./pages/admin/AdminInvoices";
+import AdminPurchases from "./pages/admin/AdminPurchases";
+import AdminBills from "./pages/admin/AdminBills";
 import AdminSuppliers from "./pages/admin/AdminSuppliers";
 import AdminStaff from "./pages/admin/AdminStaff";
 import AdminPages from "./pages/admin/AdminPages";
@@ -62,6 +64,8 @@ const App = () => (
                 <Route path="menu" element={<AdminMenu />} />
                 <Route path="categories" element={<AdminCategories />} />
                 <Route path="invoices" element={<AdminInvoices />} />
+                <Route path="purchases" element={<AdminPurchases />} />
+                <Route path="bills" element={<AdminBills />} />
                 <Route path="suppliers" element={<AdminSuppliers />} />
                 <Route path="staff" element={<AdminStaff />} />
                 <Route path="pages" element={<AdminPages />} />

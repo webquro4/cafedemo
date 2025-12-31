@@ -11,7 +11,9 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
-  FolderTree
+  FolderTree,
+  ShoppingCart,
+  Receipt
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
@@ -49,6 +51,16 @@ const AdminSidebar = () => {
       name: "Invoices",
       href: "/admin/invoices",
       icon: FileText,
+    },
+    {
+      name: "Purchases",
+      href: "/admin/purchases",
+      icon: ShoppingCart,
+    },
+    {
+      name: "Bills",
+      href: "/admin/bills",
+      icon: Receipt,
     },
     {
       name: "Suppliers",

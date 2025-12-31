@@ -24,6 +24,8 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminInvoices from "./pages/admin/AdminInvoices";
 import AdminPurchases from "./pages/admin/AdminPurchases";
 import AdminBills from "./pages/admin/AdminBills";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminRefunds from "./pages/admin/AdminRefunds";
 import AdminSuppliers from "./pages/admin/AdminSuppliers";
 import AdminStaff from "./pages/admin/AdminStaff";
 import AdminPages from "./pages/admin/AdminPages";
@@ -66,6 +68,8 @@ const App = () => (
                 <Route path="invoices" element={<AdminInvoices />} />
                 <Route path="purchases" element={<AdminPurchases />} />
                 <Route path="bills" element={<AdminBills />} />
+                <Route path="payments" element={<AdminPayments />} />
+                <Route path="refunds" element={<AdminRefunds />} />
                 <Route path="suppliers" element={<AdminSuppliers />} />
                 <Route path="staff" element={<AdminStaff />} />
                 <Route path="pages" element={<AdminPages />} />

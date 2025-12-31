@@ -13,7 +13,9 @@ import {
   User,
   FolderTree,
   ShoppingCart,
-  Receipt
+  Receipt,
+  CreditCard,
+  RotateCcw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
@@ -61,6 +63,16 @@ const AdminSidebar = () => {
       name: "Bills",
       href: "/admin/bills",
       icon: Receipt,
+    },
+    {
+      name: "Payments",
+      href: "/admin/payments",
+      icon: CreditCard,
+    },
+    {
+      name: "Refunds",
+      href: "/admin/refunds",
+      icon: RotateCcw,
     },
     {
       name: "Suppliers",
